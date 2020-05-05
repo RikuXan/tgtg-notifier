@@ -37,6 +37,7 @@ def watch_tgtg():
                                       longitude=tgtg_search_lon,
                                       radius=tgtg_search_range)
 
+        print(f"Found {len(items)} favourited stores of which {len([_ for _ in items if item['items_available'] > 0])} have available items...")
         for item in items:
             if item['items_available'] > 0:
                 print(f"Found available product: {item['display_name']} at {datetime.now().strftime('%d.%m.%Y %H:%m:%s')}")
@@ -44,6 +45,7 @@ def watch_tgtg():
                     push_target = pb_client if pb_notification_channel is None else pb_client.get_channel(pb_notification_channel)
                     push_target.push_note(f"TGTG: {item['display_name']} at {datetime.now().strftime('%H:%m')}", f"https://share.toogoodtogo.com/item/{item['item']['item_id']}")
 
+        print(f"All favourited stores were processed. Sleeping {environ.get('SLEEP_INTERVAL', '60')} seconds...")
         time.sleep(int(environ.get('SLEEP_INTERVAL', '60')))
 
 
