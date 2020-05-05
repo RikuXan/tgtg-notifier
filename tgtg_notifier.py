@@ -37,7 +37,7 @@ def watch_tgtg():
                                       longitude=tgtg_search_lon,
                                       radius=tgtg_search_range)
 
-        print(f"Found {len(items)} favourited stores of which {len([_ for _ in _['items_available'] > 0])} have available items...")
+        print(f"Found {len(items)} favourited stores of which {len([_ for _ in items if _['items_available'] > 0])} have available items...")
         for item in items:
             if item['items_available'] > 0:
                 print(f"Found available product: {item['display_name']} at {datetime.now().strftime('%d.%m.%Y %H:%m:%s')}")
