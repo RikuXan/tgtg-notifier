@@ -1,4 +1,4 @@
-import requests
+from datetime import datetime
 import time
 from os import environ
 from pushbullet import Pushbullet
@@ -11,6 +11,12 @@ tgtg_user_id = environ.get('TGTG_USER_ID', None)
 tgtg_access_token = environ.get('TGTG_ACCESS_TOKEN', None)
 
 pb_api_key = environ.get('PB_API_KEY', None)
+
+tgtg_search_lat = environ.get('TGTG_SEARCH_LAT', 0.0)
+tgtg_search_lon = environ.get('TGTG_SEARCH_LON', 0.0)
+tgtg_search_range = environ.get('TGTG_SEARCH_RANGE', 20000)
+
+pb_notification_channel = environ.get('PB_NOTIFICATION_CHANNEL', None)
 
 
 def watch_tgtg():
@@ -26,15 +32,17 @@ def watch_tgtg():
         pb_client = Pushbullet(pb_api_key)
 
     while True:
-        items = tgtg_client.get_items(favorites_only=True, latitude=49.017508, longitude=12.092244, radius=5000)
+        items = tgtg_client.get_items(favorites_only=True,
+                                      latitude=tgtg_search_lat,
+                                      longitude=tgtg_search_lon,
+                                      radius=tgtg_search_range)
 
         for item in items:
             if item['items_available'] > 0:
-                info_string = f"Found available store: {item['display_name']} "
-                print(info_string)
+                print(f"Found available product: {item['display_name']} at {datetime.now().strftime('%d.%m.%Y %H:%m:%s')}")
                 if pb_client is not None:
-                    pb_client.
-            pass
+                    push_target = pb_client if pb_notification_channel is None else pb_client.get_channel(pb_notification_channel)
+                    push_target.push_note(f"TGTG: {item['display_name']} at {datetime.now().strftime('%H:%m')}", f"https://share.toogoodtogo.com/item/{item['item']['item_id']}")
 
         time.sleep(int(environ.get('SLEEP_INTERVAL', '60')))
 
