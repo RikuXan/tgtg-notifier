@@ -54,7 +54,7 @@ def watch_tgtg():
     if pb_api_key is not None:
         pb_client = Pushbullet(pb_api_key)
 
-    if environ.get('PB_CLEAR_CHANNEL', False):
+    if bool(environ.get('PB_CLEAR_CHANNEL', False)):
         for push in pb_client.get_pushes():
             if 'channel_iden' in push and push['channel_iden'] == pb_client.get_channel(pb_notification_channel).iden:
                 pb_client.delete_push(push['iden'])
