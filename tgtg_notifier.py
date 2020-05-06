@@ -94,7 +94,7 @@ def watch_tgtg():
                     if push_to_delete is not None:
                         pb_client.delete_push(push_to_delete['iden'])
 
-                keys_to_delete.append(available_item_idcat)
+                keys_to_delete.append(available_item_id)
 
         for key_to_delete in keys_to_delete:
             del available_items[key_to_delete]
