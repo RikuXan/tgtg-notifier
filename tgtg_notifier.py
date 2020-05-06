@@ -100,7 +100,7 @@ def watch_tgtg():
             del available_items[key_to_delete]
 
         print(f"All favourited stores were processed. Sleeping {environ.get('SLEEP_INTERVAL', '60')} seconds...")
-        time.sleep(int(environ.get('SLEEP_INTERVAL', '5')))
+        time.sleep(int(environ.get('SLEEP_INTERVAL', '60')))
 
 
 if __name__ == '__main__':
