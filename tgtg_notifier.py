@@ -39,7 +39,7 @@ tgtg_search_lat = environ.get('TGTG_SEARCH_LAT', 0.0)
 tgtg_search_lon = environ.get('TGTG_SEARCH_LON', 0.0)
 tgtg_search_range = environ.get('TGTG_SEARCH_RANGE', 20000)
 
-pb_notification_channel = environ.get('PB_NOTIFICATION_CHANNEL', None)
+pb_notification_channel_tag = environ.get('PB_NOTIFICATION_CHANNEL', None)
 
 
 def watch_tgtg():
@@ -54,9 +54,11 @@ def watch_tgtg():
     if pb_api_key is not None:
         pb_client = Pushbullet(pb_api_key)
 
-    if bool(environ.get('PB_CLEAR_CHANNEL', False)):
+    pb_notification_channel = pb_client.get_channel(pb_notification_channel_tag) if pb_notification_channel_tag is not None else None
+
+    if bool(environ.get('PB_CLEAR_CHANNEL', False)) and pb_notification_channel is not None:
         for push in pb_client.get_pushes():
-            if 'channel_iden' in push and push['channel_iden'] == pb_client.get_channel(pb_notification_channel).iden:
+            if 'channel_iden' in push and push['channel_iden'] == pb_notification_channel.iden:
                 pb_client.delete_push(push['iden'])
 
     available_items = {}
@@ -81,7 +83,7 @@ def watch_tgtg():
                         pb_client.push_link(f"New TGTG product available",
                                             f"https://share.toogoodtogo.com/item/{item['item']['item_id']}",
                                             f"{item['display_name']} since {datetime.now().strftime('%H:%M:%S (%d.%m.%Y)')}",
-                                            channel=pb_client.get_channel(pb_notification_channel),
+                                            channel=pb_notification_channel,
                                             guid=push_guid)
                     available_items[item['item']['item_id']] = {'item': item, 'still_available': True, 'push_guid': push_guid}
 
